@@ -5,12 +5,21 @@ export class User {
   @PrimaryGeneratedColumn()
   userId: number;
 
-  @Column()
-  username: string;
-
   @Column({ unique: true })
   email: string;
 
   @Column()
   password: string;
+
+  @Column()
+  username: string;
+
+  @Column()
+  usernick: string;
+
+  @Column({
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 }
