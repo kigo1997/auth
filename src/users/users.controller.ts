@@ -8,6 +8,8 @@ import {
   Param,
   Put,
   Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
@@ -36,13 +38,21 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Put(':id')
-  async update(@Param('id') id: number, @Body() user: User) {
+  async update(@Request() req, @Param('id') id: number, @Body() user: User) {
+    if (req.userId != id && !req.admin) {
+      throw new HttpException('권한이 없습니다.', HttpStatus.FORBIDDEN);
+    }
+
     return this.usersService.update(id, user);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  async remove(@Param('id') id: number) {
+  async remove(@Request() req, @Param('id') id: number) {
+    if (req.userId != id && !req.admin) {
+      throw new HttpException('권한이 없습니다.', HttpStatus.FORBIDDEN);
+    }
+
     return this.usersService.remove(id);
   }
 }
