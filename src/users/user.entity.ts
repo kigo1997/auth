@@ -15,6 +15,12 @@ export class User {
   usernick: string;
 
   @Column({
+    type: 'boolean',
+    default: false,
+  })
+  admin: boolean;
+
+  @Column({
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
