@@ -11,8 +11,15 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findOne(email: string): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { email } });
+  async findOne(userId: number): Promise<User | undefined> {
+    const user = await this.userRepository.findOne({ where: { userId } });
+
+    delete user.password;
+    return user;
+  }
+
+  async findByEmail(userEmail: string): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { userEmail } });
   }
 
   async create(user: User): Promise<User> {
@@ -22,7 +29,17 @@ export class UsersService {
       password: hashedPassword,
     };
     const savedUser = await this.userRepository.save(newUser);
+
     delete savedUser.password;
     return savedUser;
+  }
+
+  async update(userId: number, user: User): Promise<User> {
+    await this.userRepository.update(userId, user);
+    return this.findOne(userId);
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.userRepository.delete(id);
   }
 }

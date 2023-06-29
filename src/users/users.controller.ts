@@ -1,4 +1,3 @@
-// users/users.controller.ts
 import {
   Controller,
   Get,
@@ -6,6 +5,9 @@ import {
   Body,
   Request,
   UseGuards,
+  Param,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
@@ -16,13 +18,31 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(AuthGuard('jwt'))
-  @Get()
+  @Get('profile')
   getProfile(@Request() req) {
     return req.user;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    return this.usersService.findOne(id);
   }
 
   @Post()
   async create(@Body() user: User) {
     return this.usersService.create(user);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() user: User) {
+    return this.usersService.update(id, user);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete(':id')
+  async remove(@Param('id') id: number) {
+    return this.usersService.remove(id);
   }
 }
